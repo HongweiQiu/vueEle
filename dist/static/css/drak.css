@@ -1,0 +1,8 @@
+.el-submenu__title,.el-submenu .el-menu-item{color:#E0E0E0!important;background-color: rgb(51, 57, 64)!important;}
+.el-submenu .el-menu {background-color: rgb(51, 57, 64)!important;}
+.el-submenu__title:hover,.el-submenu .el-menu-item:hover{background-color: rgb(41, 46, 51)!important;}
+.el-menu{border-rigth:none!important;}
+aside{background-color: rgb(51, 57, 64)!important;}
+.el-menu{border:none!important;}
+.link {color:white!important;}
+.control {color:white!important;}
