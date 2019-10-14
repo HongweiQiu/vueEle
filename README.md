@@ -36,21 +36,13 @@
 
 ## 页面
 
-+ [登录](http://vadmin.lanyueos.com/login)
-+ [注册](http://vadmin.lanyueos.com/register)
-+ [404](http://vadmin.lanyueos.com/404)
-+ [500](http://vadmin.lanyueos.com/500)
++ [登录](http://retail.caidj.cn/login)
++ [注册](http://retail.caidj.cn/register)
++ [404](http://retail.caidj.cn/404)
++ [500](http://retail.caidj.cn/500)
 
 + [cnode](http://vadmin.lanyueos.com/cnode)
 
-
-## 截图
-
-![截图](2018-02-08_231542.png)
-
-![截图](20180117171004.png)
-
-![截图](20180117170917.png)
 
 
 ## 关于打包
@@ -89,9 +81,6 @@
 ## 案例
 
 1、[**浙中牛牛**（预览版）](http://www.lanyueos.com:3003) 账号：admin 密码：123456 （请不要乱改数据）
-
-![浙中牛牛 预览版](20180117175701.png)
-
 
 
 ## Build Setup
