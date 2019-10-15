@@ -43,7 +43,7 @@ export default {
       loading:true,
       list: [
        // { label: 'ID', prop: 'id' },
-        { label: '名称', prop: 'name' },
+        { label: '用户名', prop: 'name' },
         { label: '姓名', prop: 'full_name' },
         { label: '手机', prop: 'mobile' },
         { label: '区域', prop: 'area_index' },

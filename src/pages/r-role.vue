@@ -26,10 +26,12 @@
       </el-submenu>
     </el-menu> -->
      <!--  <el-table :data="tableData" style="margin-bottom: 20px;" row-key="id" width="100%" 
-       @selection-change="handleSelectionChange"
+   
         ref="multipleTable"
+        default-expand-all
       v-loading="loading" element-loading-text="拼命加载中" :tree-props="{children: 'selfNext', hasChildren: 'hasChildren'}">
-        <el-table-column type="selection" width="55" > </el-table-column>
+       <el-table-column type="selection" >
+             </el-table-column>
       
         <el-table-column prop="name" label="角色菜单"> </el-table-column>
       </el-table> -->
@@ -37,8 +39,10 @@
   :data="tableData"
   show-checkbox
    node-key="id"
+  :default-checked-keys='resourceCheckedKey'
   ref="tree"
   highlight-current
+
   :props="defaultProps">
 </el-tree>
 
@@ -51,8 +55,8 @@
 export default {
   data() {
     return {
-      checkArr:[],
-      checkboxs:[],
+      multipleTable:'',
+       resourceCheckedKey: [],
       loading: true,
       tableData: [],
        defaultProps: {
@@ -70,11 +74,14 @@ export default {
   },
 
   methods: {
-   test(id){alert(id)},
+
       submit() {
-        console.log(this.$refs.tree.getCheckedNodes());
-        const mid=this.$refs.tree.getCheckedKeys();
+    
+      
+        const mid=this.$refs.tree.getCheckedKeys().concat(this.$refs.tree.getHalfCheckedKeys())
+          //  console.log(mid);
         this.mId=mid.join(',');
+    
        console.log(this.mId)
       const head = { headers: { "api-token": this.$sign(), "Authorization": this.http.vtoken } }
       const params = {id:this.id, menuId:this.mId } 
@@ -90,7 +97,18 @@ export default {
       },
     
       resetChecked() {
-        this.$refs.tree.setCheckedKeys([]);
+   
+       for(var i in this.tableData){
+        if(this.tableData[i].isSelect){
+          // console.log(this.tableData[i])
+          console.log(this.tableData[i].selfNext[1].selfNext)
+
+        }
+       }
+    
+        //this.$refs.tree.setCheckedNodes([this.tableData[0]]);
+        // this.$refs.tree.setCheckedKeys([3]);
+
       },
     sonList() {
     
@@ -98,15 +116,15 @@ export default {
       this.http.axios.get(`${this.http.url}role/getMenu?id=${this.id}`, head).then(res => {
         this.tableData = [];
         const data = res.data.data;
-      this.checkboxs=data;
         const _this = this;
         for (var i of data) {
           const json = JSON.parse(JSON.stringify(i).replace(/sonList/g, "selfNext"));
           this.tableData.push(json);
-              
-
+             
+          
         }
-            this.$refs.tree.setCheckedKeys([3,4]);
+     
+             // this.$refs.tree.setCheckedKeys([3]); 
         setTimeout(function() { _this.loading = false }, 500);
       // 
       })
@@ -117,4 +135,5 @@ export default {
 
 </script>
 <style scoped>
+
 </style>

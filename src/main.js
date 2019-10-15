@@ -5,8 +5,9 @@ import 'babel-polyfill'
 import ElementUI from 'element-ui'
 import Axios from 'axios'
 import NProgress from 'nprogress'
-import sign from './../static/js/setting'
-import nozzle from './../static/js/interface'
+import sign from './../static/js/setting'//总部签名token
+import websitesign from './../static/js/website'//站点签名token
+
 import http from './../config/apiUrl.js'
 
 import App from './App'
@@ -39,8 +40,8 @@ import MContainer from '@/m/container'
 
 
 Vue.prototype.$sign=sign
+Vue.prototype.$websitesign=websitesign
 Vue.prototype.http=http
-Vue.prototype.nozzle=nozzle
 Vue.use(http)
 Vue.use(ElementUI)
 
@@ -60,13 +61,15 @@ Vue.use(MBackTop)
 Vue.use(MLoader)
 Vue.use(MContainer)
 
-var whiteList = ['demo', 'login']
+var whiteList = ['demo', 'login','w-login']
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
   
-  var token = localStorage.getItem('访问token');
-  // alert(token==null)
+  var token = localStorage.getItem('访问token')||localStorage.getItem('wv_token');
+ 
+   
+
   if (!token&& whiteList.indexOf(to.name) === -1) {
     app && app.$message.warning('未授权，请登陆授权后继续')
     NProgress.done()
@@ -89,8 +92,8 @@ Axios.defaults.validateStatus = status => {
 }
 // 设置请求token
 Axios.interceptors.request.use(config => {
-  var token = localStorage.getItem('访问token')
-  config.headers['Authorization'] = 'Bearer ' + token
+  // var token = localStorage.getItem('访问token')
+  // config.headers['Authorization'] = 'Bearer ' + token
   // console.log(config)
   return config
 })
@@ -105,7 +108,7 @@ Axios.interceptors.response.use(res => {
     })
      localStorage.removeItem('token')
      //localStorage.removeItem('user')
-    // router.push({name: 'login'})
+    router.push({name: 'login'})
     return Promise.reject(new Error('身份过期'))
   } else {
 

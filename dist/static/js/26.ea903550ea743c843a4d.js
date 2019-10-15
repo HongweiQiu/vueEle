@@ -1,2 +1,0 @@
-webpackJsonp([26],{Zqr0:function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});var c={methods:{goBack:function(){n("mtWM").post("http://retail.caidj.cn/api/refresh").then(function(e){console.log("suceess")}).catch(function(e){console.log(e)})}}},o={render:function(){var e=this.$createElement,t=this._self._c||e;return t("div",[t("button",{on:{click:this.goBack}},[this._v("测试")])])},staticRenderFns:[]},s=n("VU/8")(c,o,!1,null,null,null);t.default=s.exports}});
-//# sourceMappingURL=26.ea903550ea743c843a4d.js.map

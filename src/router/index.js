@@ -7,16 +7,18 @@ import Home from '@/pages/home'
 Vue.use(Router)
 
 const page = name =>()=> import('@/pages/' + name)
-
+const website =name=>()=>import('@/pages/website/'+name)
 export default new Router({
 
-   mode: 'history',
+   // mode: 'history',
   routes: [
-    {
+    { 
+         //总部端页面
       path: '',
       component: AppView,
       children: [
         {path: '/', name: 'home', component: Home},
+       
          //站点管理页面
         {path: '/api/station/index', name: 'index', component: page('s-list')},
         {path: '/api/station/create', name: 'create', component: page('s-create')},
@@ -62,7 +64,11 @@ export default new Router({
     {path: '/home-login', name: 'p-login', component: page('home-login')},
     {path: '/register', name: 'p-register', component: page('register')},
     {path: '/keyboard', name: 'p-keyboard', component: page('c-keyboard')},
-    {path: '*', redirect: {name: '404'}}
+    //站点端页面
+     {path: '/website/login', name: 'w-login', component: website('w-login')},
+     {path: '/website/home', name: 'w-home', component: website('w-home')},
+    {path: '*', redirect: {name: '404'}},
+
   ]
 
 })
