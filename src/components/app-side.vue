@@ -1,12 +1,11 @@
 <template>
-  <div>
-    <link rel="stylesheet" href="//at.alicdn.com/t/font_1383822_i60urg1ibj.css">
+   <div>
+   <link rel="stylesheet" href="//at.alicdn.com/t/font_1383822_i60urg1ibj.css">
     <el-menu default-active="2" class="el-menu-vertical-demo">
       <el-submenu :index="index+''" v-for="(item,index) in menus" :key="item.title" >
         <template slot="title">
           <i class="iconfont">&#xe6a0;</i>
-          <!--  <i class="iconfont icon-jian" ></i>
-          <i class="el-icon-location"  id='icon'></i> -->
+        
           <span v-if='isShow'>{{item.title}}</span> 
         </template>
         <el-menu-item v-if='isShow' v-for="second in item.children" index="1-4-1" :key="second.title">
@@ -18,25 +17,43 @@
       </el-submenu>
     </el-menu>
 
-
   </div>
+
+<!--  <v-menu class="side-menu"
+  :collapse="collapse"
+  :default-active="defaultActive"
+  :menus="menus"
+  router
+  :background-color="theme.backgroundColor"
+  :text-color="theme.textColor"
+  :active-text-color="theme.activeTextColor"
+  ></v-menu> -->
+
 </template>
 <script type="text/javascript">
+// import VMenu from './vmenu'
+// import menus from './menus'
 export default {
   props: {
     collapse: Boolean,
     theme: Object
-  },
-  data() {
+  }, 
+  // components: {
+  //   VMenu
+  // },
+ data () {
     return {
-      menus: [],
+      menus:[],
       defaultActive: 'home',
-
+      test: 'asdfasdf'
     }
   },
   computed: {
-    isShow() {
-      return this.$store.state.show
+    isShow:{
+      get(){return this.$store.state.show},
+      set(){
+        this.$store.state.show=false
+      }
     }
   },
   watch: {
@@ -45,14 +62,15 @@ export default {
     }
   },
   methods: {
-
+   
     setCurrentRoute() {
       this.defaultActive = this.$route.name
     },
     list() {
-    const head = { headers: {"api-token":this.$sign(), "Authorization": this.http.vtoken}}
-      this.http.axios.get('http://retail.caidj.cn/api/index',head,this.http.refresh).then(res => {
+      this.$axios.get('http://retail.caidj.cn/api/index').then(res => {
         const data = res.data.data;
+
+        localStorage.setItem('用户',data.full_name)
         this.menus = data.menu
       })
     }
@@ -64,7 +82,7 @@ export default {
 }
 
 </script>
-<style type="text/css" scoped>
+<style type="text/css">
 .el-menu.side-menu {
   border-right: none;
 }

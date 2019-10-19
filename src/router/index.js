@@ -2,11 +2,11 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import AppView from '@/components/app-view'
-import Home from '@/pages/home'
+import Home from '@/pages/headquarters/home'
 
 Vue.use(Router)
 
-const page = name =>()=> import('@/pages/' + name)
+const page = name =>()=> import('@/pages/headquarters/' + name)
 const website =name=>()=>import('@/pages/website/'+name)
 export default new Router({
 
@@ -41,33 +41,46 @@ export default new Router({
         {path: '/api/config/base', name: 'configBase', component: page('c-base')},
         {path: '/api/config/project', name: 'configProject', component: page('c-project')},
         {path: '/api/config/pay', name: 'configPay', component: page('c-pay')},
-
-        {path: '/button', name: 'c-button', component: page('c-button')},
-        {path: '/switch', name: 'c-switch', component: page('c-switch')},
-        {path: '/checkbox', name: 'c-checkbox', component: page('c-checkbox')},
-        {path: '/alert', name: 'c-alert', component: page('c-alert')},
-        {path: '/input', name: 'c-input', component: page('c-input')},
-        {path: '/keyboard', name: 'c-keyboard', component: page('c-keyboard')},
-        {path: '/loading', name: 'c-loading', component: page('c-loading')},
+        //商家管理
+        {path: '/api/business/index', name: 'shopIndex', component: page('b-list')},
+         
+       // {path: '/button', name: 'c-button', component: page('c-button')},
+       // {path: '/switch', name: 'c-switch', component: page('c-switch')},
+      //  {path: '/checkbox', name: 'c-checkbox', component: page('c-checkbox')},
+        //{path: '/alert', name: 'c-alert', component: page('c-alert')},
+       // {path: '/input', name: 'c-input', component: page('c-input')},
+        //{path: '/keyboard', name: 'c-keyboard', component: page('c-keyboard')},
+       // {path: '/loading', name: 'c-loading', component: page('c-loading')},
         // {path: '/data-table', name: 'p-data-table', component: page('table')},
-        {path: '/dropdown', name: 'c-dropdown', component: page('c-dropdown')},
+        //{path: '/dropdown', name: 'c-dropdown', component: page('c-dropdown')},
         {path: '/navbar', name: 'c-navbar', component: page('c-navbar')},
-        {path: '/container', name: 'c-container', component: page('c-container')},
-        {path: '/demo', name: 'demo', component: page('demo')},
+       // {path: '/container', name: 'c-container', component: page('c-container')},
+        //{path: '/demo', name: 'demo', component: page('demo')},
         {path: '/404', name: '404', component: page('404')},
         {path: '/500', name: '500', component: page('500')}
       ]
     },
-    {path: '/login', name: 'login', component: page('login')},
-    {path: '/cnode', name: 'cnode', component: page('cnode')},
-    // pages
-    {path: '/home-login', name: 'p-login', component: page('home-login')},
-    {path: '/register', name: 'p-register', component: page('register')},
-    {path: '/keyboard', name: 'p-keyboard', component: page('c-keyboard')},
-    //站点端页面
+     {path: '/login', name: 'login', component: page('login')},
+     //{path: '/cnode', name: 'cnode', component: page('cnode')},
+     // pages
+     {path: '/home-login', name: 'p-login', component: page('home-login')},
+     //{path: '/register', name: 'p-register', component: page('register')},
+    // {path: '/keyboard', name: 'p-keyboard', component: page('c-keyboard')},
+     //站点端页面
      {path: '/website/login', name: 'w-login', component: website('w-login')},
-     {path: '/website/home', name: 'w-home', component: website('w-home')},
-    {path: '*', redirect: {name: '404'}},
+     {path: '/website/home', name: 'w-home', component:website('w-view'),
+      children:[ 
+        {path: '/website/modify', name: 'w-modify', component: website('w-modify')},
+        {path: '/store/list', name: 'w-list', component: website('list')},
+        {path: '/store/apply', name: 'w-apply', component: website('apply')},
+        {path: '/store/newapply', name: 'w-newapply', component: website('newapply')},
+        {path: '/store/newbusiness', name: 'w-newbusiness', component: website('newbusiness')},
+        {path: '/store/echar', name: 'echar', component: website('echar')},
+        
+      ]
+   },
+      
+     {path: '*', redirect: {name: '404'}},
 
   ]
 

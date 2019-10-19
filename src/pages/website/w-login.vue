@@ -45,18 +45,20 @@ export default {
        return this.$message.warning('密码最少为6个字符')
      }
  
-     const [params,requestConfig]=[
+     const [params]=[
           
-          {'username':this.username, 'password':this.password },
-          {headers: {"api-token": this.$websitesign(), } }
+          {username:this.username, password:this.password },
+        
         ]
       
-     this.http.axios.post('http://retail.caidj.cn/website/login',params,requestConfig).then(res => {
+     this.$axios.post('http://retail.caidj.cn/website/login',params).then(res => {
           const result=res.data;
            this.isLoging = true;
-            console.log(result)
-           // console.log(result.message)
-           if(result.errCode!=0){ this.$message.warning(result.message);
+          
+           if(result.errCode!=0){
+          
+            this.$message.warning(result.message);
+                this.$router.push({name: 'w-login'});
            }else{  
             this.$message.success("登录成功");
 
