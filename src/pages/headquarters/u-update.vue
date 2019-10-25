@@ -52,7 +52,6 @@ export default {
       uid: this.$route.query.id,
       role: [],
       form: {
-       
         id: '',
         full_name: '',
         name: '',
@@ -89,20 +88,7 @@ export default {
         }
       })
     },
-    upSubmit(param) {
-      this.$axios.post(this.http.url + 'user/update', param).then(res => {
-        const data = res.data;
-        if (data.errCode !== 0) {
-          this.$message.warning(data.message);
-        } else {
-          this.$message.success('添加成功');
-          this.$router.push({ name: 'userIndex' })
-        }
-      }).catch(err => {
-        const errtip = err.response.data;
-        this.$message.info(errtip.message)
-      })
-    },
+
     onSubmit() {
       if (!this.form.mobile) { return this.$message.warning('手机号码不能为空'); }
       if (!this.form.email) { return this.$message.warning('电子邮箱不能为空'); }
@@ -116,9 +102,14 @@ export default {
         password: this.form.password,
         status:Number(this.value)
       }
+     
       var newparams = Object.assign({}, params);
       newparams['password'] = this.form.password;
-      if (this.form.password) { this.upSubmit(newparams); } else { this.upSubmit(params); }
+      if (this.form.password) { 
+        this.$api.update('api/user/update',newparams,'userIndex','修改成功') }
+         else { 
+        this.$api.update('api/user/update',params,'userIndex','修改成功') 
+         }
     },
     reset() {
       for (var i in this.form) {

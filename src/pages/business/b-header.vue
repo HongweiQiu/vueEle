@@ -8,7 +8,7 @@
     </m-navbar-brand>
     <m-nav>
       <m-nav-item>
-        <router-link :to="{name:'w-home'}">首页</router-link>
+        <router-link :to="{ name: 'b-home'}">首页</router-link>
       </m-nav-item>
     </m-nav>
     <m-nav align="right">
@@ -20,12 +20,13 @@
             <span class="caret"></span>
           </a>
           <m-dropdown-panel>
-          
+        
             <m-dropdown-item>
-              <router-link :to="{name:'w-modify'}">修改密码</router-link>
+              <router-link :to="{name:'b-modify'}">修改密码</router-link>
             </m-dropdown-item>
             <div class="test-line"></div>
             <m-dropdown-item><span @click='quit'>退出账号</span></m-dropdown-item>
+              <m-dropdown-item><span @click='refresh'>刷新token</span></m-dropdown-item>
           </m-dropdown-panel>
         </m-dropdown>
       </m-nav-item>
@@ -97,25 +98,15 @@
         },
 
         methods: {
-            //刷新token
-            // access() {
-            //   const refresh = {
-            //     headers: { "api-token": this.$websitesign() }
-            //   }
-            //   const paramtoken = { refreshToken: localStorage.getItem('wr_token') }
-            //    const axios = require('axios');
-            //  axios.post('http://retail.caidj.cn/website/refresh', paramtoken, refresh).then(res => {
-            //     const token = res.data.data;
-            //     this.access = token.access_token
-            //     localStorage.setItem('刷新token', token.refresh_token);
-            //   }).catch(err => {
-            //   })
-            // },
+
+           refresh(){
+
+            this.$api.refresh('business/refresh',{refreshToken:  localStorage.getItem('refresh_token')})
+           },
+
 
             //退出登录
-            quit() {
-            this.$api.exit('website/logout','w-login') 
-            },
+            quit() {this.$api.exit('business/logout','b-login'); },
 
             handleSwitchSide() {
                 this.mini = !this.mini
@@ -137,6 +128,8 @@
         },
 
         created() {
+            // this.access()
+
             var theme = localStorage.getItem('theme') || 'default'
             this.themeType = theme
         }

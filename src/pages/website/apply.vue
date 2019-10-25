@@ -97,19 +97,10 @@ export default {
       const _this = this;
       const pages = localStorage.getItem('apply') == null ? 1 : localStorage.getItem('apply');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbrUrl = `${this.http.web}application/list?page=${pages}&&num=${nums}`;
-      const Url = !_query ?
+      const abbrUrl = `website/application/list?page=${pages}&&num=${nums}`;
+      const url = !_query ?
         `${abbrUrl}` : `${abbrUrl}&&search=status:${_query};name:${_query}`;//&&searchJoin=and
-      this.$axios.get(Url).then(res => {
-        const result = res.data.data;
-        const data = result.collection;
-        this.count = result.total;
-        this.table = []; 
-        for (var i of data) {
-          this.table.push(i); 
-        }
-        setTimeout( ()=>_this.loading = false , 500);
-      })
+      this.$api.list(url,this)
     },
 
     //站点通过

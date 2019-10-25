@@ -78,17 +78,14 @@ export default {
   methods: {
     //区域选择
      selectArea(rank,id,site){
-      const head = { headers: {"api-token":this.$sign(), "Authorization": this.http.vtoken}}
-      const Url=!rank?`${this.http.url}station/getArea`:`${this.http.url}station/getArea?level=${rank}&&area_code=${id}`;
-      this.http.axios.get(Url, head).then(res => {this[site] = res.data.data; }) 
-      console.log(this[site])
+      const url=!rank?`${this.http.url}station/getArea`:`${this.http.url}station/getArea?level=${rank}&&area_code=${id}`;
+      this.$axios.get(url).then(res => {this[site] = res.data.data; }) 
       },
      Province(id) {this.selectArea(0,0,'province'); }, //省份
      City(id) {this.selectArea(1,id,'city'); }, //市
      Area(id) {this.selectArea(2,id,'area'); }, //区域
 
     onSubmit() {
-         const head = { headers: {"api-token":this.$sign(), "Authorization": this.http.vtoken}}
       const [pid, cid, aid] = [this.form.c_province, this.form.c_city, this.form.c_area];
       const params=  {   
              name: this.form.title, 
@@ -100,19 +97,8 @@ export default {
         	 address: this.form.address,
         	 area_index: `${pid},${cid},${aid}` 
         	}
-      this.http.axios.post(this.http.url + 'station/create', params,head).then(res => {
-        const data=res.data;
-        if(data.errCode!==0){
-            this.$message.warning(data.message);
-        }else{
-           this.$message.success('添加成功');
-        this.$router.push({ name: 'index' })
-        }
-       
-      }).catch(err => {
-        const errtip = err.response.data;
-        this.$message.info(errtip.message)
-      })
+          const url='api/station/create'
+          this.$api.update(url,params,'index','添加成功');
     },
     reset() {
       for (var i in this.form) {

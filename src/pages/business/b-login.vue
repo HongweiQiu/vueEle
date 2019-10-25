@@ -4,7 +4,7 @@
       <div style="text-align: center">
         <!-- <img src="../assets/caidj_logo.jpg" alt="" class="logo"> -->
       </div>
-      <p class="text-tips">你好，欢迎登录站点端</p>
+      <p class="text-tips">你好，欢迎登录商家端</p>
       <form action="" class="login-form">
         <div class="m-list-group">
           <div class="m-list-group-item">
@@ -35,9 +35,9 @@ export default {
     handleLogin () {
        this.isLoging = true;
        const _this=this;
-       const url ='website/login';
+       const url ='business/login';
        const params= {username:this.username, password:this.password }
-       this.$api.login(url,params,'w-home',this)  
+       this.$api.login(url,params,'b-home',this)  
        setTimeout(()=>{ _this.isLoging=false},1000)   
 }
   }

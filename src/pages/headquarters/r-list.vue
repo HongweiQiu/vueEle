@@ -55,7 +55,9 @@ export default {
   created() {
     this.sindex()
   },
-
+  mounted(){
+    window.table=this.table;
+  },
   methods: {
     //每页显示的条数
     handleSizeChange(val) {
@@ -74,20 +76,10 @@ export default {
     sindex() {
       const pages = localStorage.getItem('角色') == null ? 1 : localStorage.getItem('角色');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbr = `${this.http.url}role/index?page=${pages}&&num=${nums}`;
-      const Url = !this.query ?
+      const abbr = `api/role/index?page=${pages}&&num=${nums}`;
+      const url = !this.query ?
         abbr : `${abbr}&&search=name:${this.query}`;
-       this.$axios.get(Url).then(res => {
-        const result = res.data.data;
-        const data = result.collection;
-        this.count = result.total;
-        this.table = [];
-        const _this = this;
-        for (var i of data) {
-          this.table.push(i);
-          setTimeout(function() { _this.loading = false }, 500);
-        }
-      })
+      this.$api.list(url,this);
     },
 
     //修改角色
@@ -95,20 +87,9 @@ export default {
 
     //删除角色
     del(id) {
-      this.$confirm('此操作将永久删除该信息, 是否继续?', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.get(`${this.http.url}role/delete?id=${id}`).then(res=> {
-          const data =res.data;
-          if(data.errCode=!0){
-            this.$message.warning(data.message);
-          }else{ this.sindex();
-          this.$message.success('删除成功')}
-         
-        })
-      }).catch(() => { this.$message.warning('已取消删除') });
+      const url='api/role/delete';
+       this.$api.delete(url,id,this);
+       
     },
 
     authorize(id) { this.$router.push({ name: 'roleOrder', query: { id } }) }

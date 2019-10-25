@@ -1,7 +1,7 @@
 <template>
   <div class="page-body">
     <div class="page-header">
-      <!--   <h1 class="page-title">Table表格数据</h1> -->
+    
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>人员管理</el-breadcrumb-item>
@@ -13,16 +13,13 @@
         <m-input placeholder="请输入你要查找的名称" theme="success" v-model="query" @keyup.enter.native="search()" />
       </el-breadcrumb>
     </div>
-    <div class="box"> <i></i>
+    <div class="box">
       <el-table :data="table" max-height="550" :default-sort="{prop: 'created_at', order: 'descending'}" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <el-table-column label="#" type="index"></el-table-column>
         <el-table-column v-for='item in list' :label="item.label" :prop="item.prop" :key='item.label'></el-table-column>
         <el-table-column label="状态">
           <template slot-scope="scope">
-            <el-switch  style="display: block" v-model="!!scope.row.status" 
-            active-text="正常"
-            inactive-text="冻结"
-            active-color="#13ce66" inactive-color="#ff4949" disabled>
+             <el-switch @change='change(scope.row.id,scope.row.status)' v-model="scope.row.status" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949">
             </el-switch>
           </template>
         </el-table-column>
@@ -93,44 +90,24 @@ export default {
       let _query = this.query;
       const pages = localStorage.getItem('people') == null ? 1 : localStorage.getItem('people页数');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbrUrl = `${this.http.url}user/index?page=${pages}&&num=${nums}`;
-      const Url = !_query ?
-        `${abbrUrl}` : `${abbrUrl}&&search=name:${_query}`;
-
-      this.$axios.get(Url).then(res => {
-        const result = res.data.data;
-        const data = result.collection;
-        this.count = result.total;
-
-        this.table = [];
-        for (var i of data) {
-          this.table.push(i);
-        }
-        setTimeout(function() { _this.loading = false }, 500);
-      })
+      const abbrUrl = `api/user/index?page=${pages}&&num=${nums}`;
+      const url = !_query ?
+        `${abbrUrl}` : `${abbrUrl}&&search=full_name:${_query}`;
+       this.$api.list(url,this)
+     
     },
 
     //修改站点
     update(id) { this.$router.push({ name: 'userUpdate', query: { id } }) },
+    
+   change(id, state) {
+      const param = { id: id, status: state }
+      this.$api.nozzle('api/user/update',param,this)
+    },
 
     //删除站点
     del(id) {
-      this.$confirm('此操作将永久删除该信息, 是否继续?', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.get(`${this.http.url}user/delete?id=${id}`).then(res => {
-          const data = res.data;
-          if (data.errCode != 0) {
-            this.$message.warning(data.message);
-          } else {
-            this.$message.success('删除成功')
-          }
-          this.sindex();
-
-        })
-      }).catch(() => { this.$message.warning('已取消删除') });
+      this.$api.delete('api/user/delete',id,this)
     }
   }
 }

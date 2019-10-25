@@ -1,7 +1,6 @@
 <template>
   <div class="page-body">
     <div class="page-header">
-      <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>站点管理</el-breadcrumb-item>
@@ -10,16 +9,15 @@
     </div>
     <div class="box">
       <el-form ref="form" :model="form">
-  
         <el-form-item label="角色">
     <el-select v-model="form.id" placeholder="请选择角色" style="width:100%;">
-     <el-option v-for="item in role" :label="item.name" :value="item.id" :key='index'></el-option>
+     <el-option v-for="(item,index) in role" :label="item.name" :value="item.id" :key='index'></el-option>
     </el-select>
   </el-form-item>
         <el-form-item label="姓名">
           <el-input v-model="form.full_name"></el-input>
         </el-form-item>
-        <el-form-item label="用户名">
+        <el-form-item label="用户名称">
           <el-input v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="密码">
@@ -60,9 +58,8 @@ export default {
    },
   methods: {
  roleSelect(){
-     const head = { headers: { "api-token": this.$sign(), "Authorization": this.http.vtoken } }
-      this.http.axios.get(this.http.url + 'role/lists',head).then(res => {
-
+  
+      this.$axios.get('http://retail.caidj.cn/api/role/lists').then(res => {
         const data = res.data;
         this.role=data.data;
         if (data.errCode !== 0) {
@@ -72,8 +69,6 @@ export default {
  },
 
     onSubmit() {
-      const head = { headers: { "api-token": this.$sign(), "Authorization": this.http.vtoken } }
-
       const params = {
         role_id: Number(this.form.id),
         full_name: this.form.full_name,
@@ -81,22 +76,10 @@ export default {
         mobile: this.form.mobile,
         email: this.form.email,
         password: this.form.password,
-
       }
-      this.http.axios.post(this.http.url + 'user/create', params, head).then(res => {
-        const data = res.data;
-        if (data.errCode !== 0) {
-          this.$message.warning(data.message);
-        } else {
-          this.$message.success('添加成功');
-          this.$router.push({ name: 'userIndex' })
-        }
-
-      }).catch(err => {
-        const errtip = err.response.data;
-        this.$message.info(errtip.message)
-      })
+      this.$api.update('api/user/create',params,'userIndex','添加成功')
     },
+    
     reset() {
       for (var i in this.form) {
         this.form[i] = ''

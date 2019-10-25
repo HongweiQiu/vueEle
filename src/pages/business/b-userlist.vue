@@ -3,10 +3,10 @@
     <div class="page-header">
       <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'b-home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>商家管理</el-breadcrumb-item>
-        <el-breadcrumb-item>商家列表</el-breadcrumb-item>
-        <router-link :to="{name:'w-newbusiness'}">
+        <el-breadcrumb-item>人员列表</el-breadcrumb-item>
+        <router-link :to="{name:'b-adduser'}">
           <m-button type="success" size="mini" class='add'>添加</m-button>
         </router-link>
         <m-button type="success" size="mini" class='search' @click='search'>查询</m-button>
@@ -14,18 +14,26 @@
       </el-breadcrumb>
     </div>
     <div class="box"> 
-      <el-table :data="table" max-height="550" :default-sort="{prop: 'created_at', order: 'descending'}" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
+      <el-table :data="table" max-height="550"  v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <el-table-column label="#" type="index"></el-table-column>
         <el-table-column v-for='item in list' :label="item.label" :prop="item.prop" :key='item.label'></el-table-column>
-        <el-table-column label="是否加入黑名单">
+        
+            <el-table-column label="状态">
           <template slot-scope="scope">
-            <m-button type="info" size="mini" @click='resume(scope.row.id,scope.row.status)' :disabled='scope.row.status==1'>恢复</m-button>
-            <m-button type="warning" size="mini" @click='block(scope.row.id,scope.row.status)' :disabled='scope.row.status==0'>拉黑</m-button>
+            <el-switch @change='change(scope.row.id,scope.row.status)' v-model="scope.row.status" :active-value="1" :inactive-value="0" active-color="#13ce66" inactive-color="#ff4949">
+            </el-switch>
+          </template>
+        </el-table-column>
+      
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <m-button type="info" size="mini" @click='update(scope.row.id)' >编辑</m-button>
+            <m-button type="warning" size="mini" @click='del(scope.row.id)' >删除</m-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="block" style="display:flex;padding-top:1%;">
-        <el-pagination style="margin:0 auto;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="arrPage" :page-size="3" :size="20" layout="total, sizes, prev, pager, next, jumper" :total="count" @keyup.left.native="left()">
+        <el-pagination style="margin:0 auto;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="arrPage" :page-size="3" :size="20" layout="total, sizes, prev, pager, next, jumper" :total="count" >
         </el-pagination>
       </div>
     </div>
@@ -37,10 +45,11 @@ export default {
   data() {
     return {
       list: [
-        { label: '创建时间', prop: 'created_at' },
+     
         { label: '商家名称', prop: 'name' },
         { label: '手机', prop: 'mobile' },
-        { label: '利率', prop: 'rate' },
+        { label: '角色', prop: 'role.name' },
+      
       ],
       loading: true,
       query: '',
@@ -49,7 +58,7 @@ export default {
       num: '',
       page: '1',
       count: null,
-      currentPage4: parseInt(localStorage.getItem('list'))
+      currentPage4: parseInt(localStorage.getItem('b-userlist'))
     }
   },
 
@@ -58,6 +67,11 @@ export default {
   },
 
   methods: {
+    change(id, state) {
+     
+      const param = { id: id, status: state }
+      this.$api.nozzle('business/user/freeze',param,this)
+    },
     //查询信息
     search() {
       this.sindex()
@@ -71,54 +85,33 @@ export default {
     //跳转页面
     handleCurrentChange(val) {
       this.page = val;
-      localStorage.setItem('list', this.page)
+      localStorage.setItem('b-userlist', this.page)
       this.sindex()
     },
 
     //显示站点列表
     sindex() {
 
-       const _query=this.query;
       const _this = this;
-    
-      const pages = localStorage.getItem('list') == null ? 1 : localStorage.getItem('list');
+      const query = this.query;
+      const pages = localStorage.getItem('b-userlist') == null ? 1 : localStorage.getItem('b-userlist');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbrUrl = `website/business/list?page=${pages}&&num=${nums}`;
-      const url = !_query ?
-        `${abbrUrl}` : `${abbrUrl}&&search=status:${_query};name:${_query}`;//&&searchJoin=and
-       this.$api.list(url,this)
+      const abbrUrl = `business/user/index?page=${pages}&&num=${nums}`;
+      const url = !query ?
+        `${abbrUrl}` : `${abbrUrl}&&search=mobile:${query};name:${query};created_at:${query}`; //name:test&&searchJoin=and
+     this.$api.list(url,this)
     },
 
-    //恢复商家
-    resume(id, status) {
-      var str, status;
-      if (status == 1) {
-        str = '是否拉入黑名单';
-        status = 0;
-      } else {
-        str = '是否从黑名单移除该商家'
-        status = 1;
-      }
-
-      this.$confirm(str, '', {
-        cancelButtonText: '否',
-        confirmButtonText: '是',
-        type: 'warning'
-      }).then(() => {
-        const param = {
-          id: id,
-          status: status
-        }
-        this.$axios.post(`${this.http.web}business/addBlackLists`, param).then(() => {
-          this.$message.success('成功');
-          this.sindex();
-        })
-      }).catch(() => { this.$message.warning('已取消') });
+    //更新商家
+    update(id) {
+     
+      this.$router.push({name:'b-updateuser',query:{id}})
     },
 
-    //拉黑商家
-    block(id, status) {
-      this.resume(id, status)
+    //删除
+    del(id) {
+      const url='business/user/delete';
+ this.$api.delete(url,id,this)
     }
   }
 }

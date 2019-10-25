@@ -3,24 +3,26 @@
     <div class="page-header">
       <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'b-home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>商家管理</el-breadcrumb-item>
-        <el-breadcrumb-item>商家列表</el-breadcrumb-item>
-        <router-link :to="{name:'w-newbusiness'}">
+        <el-breadcrumb-item>角色列表</el-breadcrumb-item>
+        <router-link :to="{name:'b-rolecreate'}">
           <m-button type="success" size="mini" class='add'>添加</m-button>
         </router-link>
-        <m-button type="success" size="mini" class='search' @click='search'>查询</m-button>
-        <m-input placeholder="请输入你要查找的名称" theme="success" v-model="query" @keyup.enter.native="search()" />
+        <!-- <m-button type="success" size="mini" class='search' @click='search'>查询</m-button>
+        <m-input placeholder="请输入你要查找的名称" theme="success" v-model="query" @keyup.enter.native="search()" /> -->
       </el-breadcrumb>
     </div>
     <div class="box"> 
       <el-table :data="table" max-height="550" :default-sort="{prop: 'created_at', order: 'descending'}" v-loading="loading" element-loading-text="拼命加载中" element-loading-spinner="el-icon-loading">
         <el-table-column label="#" type="index"></el-table-column>
         <el-table-column v-for='item in list' :label="item.label" :prop="item.prop" :key='item.label'></el-table-column>
-        <el-table-column label="是否加入黑名单">
+        <el-table-column label="操作">
           <template slot-scope="scope">
-            <m-button type="info" size="mini" @click='resume(scope.row.id,scope.row.status)' :disabled='scope.row.status==1'>恢复</m-button>
-            <m-button type="warning" size="mini" @click='block(scope.row.id,scope.row.status)' :disabled='scope.row.status==0'>拉黑</m-button>
+            <m-button type="info" size="mini" @click='update(scope.row.id,scope.row.status)' 
+           :disabled="scope.row.name == '超级管理员'">编辑</m-button>
+            <m-button type="warning" size="mini" @click='del(scope.row.id,scope.row.status)' 
+            :disabled="scope.row.name == '超级管理员'">删除</m-button>
           </template>
         </el-table-column>
       </el-table>
@@ -37,10 +39,10 @@ export default {
   data() {
     return {
       list: [
-        { label: '创建时间', prop: 'created_at' },
-        { label: '商家名称', prop: 'name' },
-        { label: '手机', prop: 'mobile' },
-        { label: '利率', prop: 'rate' },
+     
+        { label: '角色名称', prop: 'name' },
+        { label: '备注', prop: 'remark' },
+      
       ],
       loading: true,
       query: '',
@@ -71,54 +73,32 @@ export default {
     //跳转页面
     handleCurrentChange(val) {
       this.page = val;
-      localStorage.setItem('list', this.page)
+      localStorage.setItem('rolelist', this.page)
       this.sindex()
     },
 
     //显示站点列表
     sindex() {
-
-       const _query=this.query;
       const _this = this;
-    
-      const pages = localStorage.getItem('list') == null ? 1 : localStorage.getItem('list');
+      const query = this.query;
+      const pages = localStorage.getItem('rolelist') == null ? 1 : localStorage.getItem('rolelist');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbrUrl = `website/business/list?page=${pages}&&num=${nums}`;
-      const url = !_query ?
-        `${abbrUrl}` : `${abbrUrl}&&search=status:${_query};name:${_query}`;//&&searchJoin=and
-       this.$api.list(url,this)
+      const abbrUrl = `business/role/index?page=${pages}&&num=${nums}`;
+      const url = !query ?
+        `${abbrUrl}` : `${abbrUrl}&&search=name:${query};name:${query};created_at:${query}`; //name:test&&searchJoin=and
+      this.$api.list(url,this)
     },
 
-    //恢复商家
-    resume(id, status) {
-      var str, status;
-      if (status == 1) {
-        str = '是否拉入黑名单';
-        status = 0;
-      } else {
-        str = '是否从黑名单移除该商家'
-        status = 1;
-      }
-
-      this.$confirm(str, '', {
-        cancelButtonText: '否',
-        confirmButtonText: '是',
-        type: 'warning'
-      }).then(() => {
-        const param = {
-          id: id,
-          status: status
-        }
-        this.$axios.post(`${this.http.web}business/addBlackLists`, param).then(() => {
-          this.$message.success('成功');
-          this.sindex();
-        })
-      }).catch(() => { this.$message.warning('已取消') });
+    //角色更新
+    update(id) {
+      this.$router.push({name:'b-roleupdate',query:{id}})
     },
 
     //拉黑商家
-    block(id, status) {
-      this.resume(id, status)
+    del(id) {
+      // this.resume(id, status)  
+      const url='business/role/delete';
+       this.$api.delete(url,id,this);
     }
   }
 }

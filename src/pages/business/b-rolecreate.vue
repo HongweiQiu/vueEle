@@ -3,7 +3,7 @@
     <div class="page-header">
       <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'b-home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>角色新增</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
@@ -31,24 +31,21 @@ export default {
       form: {
         note: '',
         name: '',
-     
       }
     }
   },
 
   methods: {
-    
     onSubmit() {
       const params=  {name: this.form.name, remark: this.form.note } 
-      this.$api.update('api/role/create',params,'roleIndex','创建成功')
+      this.$api.update('business/role/create',params,'b-rolelist','添加成功')       
     },
-
+    
     reset() {
       for (var i in this.form) {
         this.form[i] = ''
       }
     }
-    
   }
 
 }

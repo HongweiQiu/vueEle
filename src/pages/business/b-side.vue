@@ -2,7 +2,7 @@
   <div>
     <link rel="stylesheet" href="//at.alicdn.com/t/font_1383822_i60urg1ibj.css">
     <el-menu default-active="2" class="el-menu-vertical-demo">
-      <el-submenu :index="index+''" v-for="(item,index) in menus" :key="item.title">
+      <el-submenu :index="index+''" v-for="(item,index) in menus" :key="item.title" >
         <template slot="title">
           <i class="iconfont">&#xe6a0;</i>
           <!--  <i class="iconfont icon-jian" ></i>
@@ -18,7 +18,7 @@
         </el-menu-item>
       </el-submenu>
     </el-menu>
-
+     
 
   </div>
 </template>
@@ -30,12 +30,14 @@ export default {
   },
   data() {
     return {
+      value:'',
       menus: [
         {title:'商家管理',
         children:[
-        {title:'商家列表',href:'/website/list'},
-        {title:'商家申请列表',href:'/website/apply' },
-      
+        {title:'角色列表',href:'/business/rolelist'},
+        {title:'人员列表',href:'/business/userlist' },
+        {title:'日志列表',href:'/business/logs' },
+        {title:'基本设置',href:'/business/config' }
         ]
       } 
       ],

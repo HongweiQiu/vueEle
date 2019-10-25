@@ -3,8 +3,8 @@ import { Base64 } from 'js-base64';
 
 function sign(){
 
-    const access_key = 'fIYsKZdyBMSfofv42LHvtXW8v3YY4OP5'; // 服务端生成的 access_key
-      const secret_key = 'TpCCbQuy8oFyUZzIKc06clCUuD7K951T'; // 服务端生成的 secret_key
+    const access_key = 'wNwW90YIrALNm15EXj4vzhXC2gajwEnF'; // 服务端生成的 access_key
+      const secret_key = '4ol079Oogecqlwtmgqde8yzVTnqKxY88'; // 服务端生成的 secret_key
 
       const timestamp = Date.parse(new Date()) / 1000; // 取时间戳
       const echostr = 'asldjaksdjlkjgqpojg64131321'; // 随机字符串自行生成

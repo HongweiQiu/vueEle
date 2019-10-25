@@ -13,12 +13,10 @@
       <m-nav-item padding="0">
         <m-dropdown align="right" v-if="user" padding="0 10px">
           <a href="#" style="display: inline-block; padding: 0px; color: inherit">
-       <!--      <img src="../assets/user.jpg" alt="" style="border-radius: 3px;vertical-align: middle;"> -->
             <span>{{currentuser}}</span>
             <span class="caret"></span>
           </a>
           <m-dropdown-panel>
-          <!--   <m-dropdown-item><span>用户信息</span></m-dropdown-item> -->
             <m-dropdown-item><router-link :to="{name:'modify'}">修改密码</router-link></m-dropdown-item>
             <div class="test-line"></div>
             <m-dropdown-item><span @click='quit'>退出账号</span></m-dropdown-item>
@@ -118,23 +116,7 @@ export default {
 
     //退出登录
     quit() {
-
-      const requestConfig = {
-        headers: {
-          "api-token": this.$sign(),
-          "Authorization": 'Bearer ' + localStorage.getItem('访问token')//this.access
-        },
-      };
-      const axios = require('axios');
-
-      axios.get('http://retail.caidj.cn/api/logout', requestConfig).then(res => {
-
-        this.$router.push({ name: 'login' });
-        this.$message.success('退出成功');
-        localStorage.removeItem('访问token')
-      }).catch(err => {
-        this.$message.warning('退出失败');
-      })
+     this.$api.exit('api/logout','login');
     },
 
     handleSwitchSide() {

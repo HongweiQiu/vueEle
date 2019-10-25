@@ -8,22 +8,22 @@
         <el-breadcrumb-item>项目配置</el-breadcrumb-item>
       </el-breadcrumb>
     </div>
-    <div class="box">
+    <div class="box c-project">
       <el-form ref="form" :model="form">
   
-        <el-form-item label="短　信 　账　 号">
+        <el-form-item label="短　信 　账　 号"><br>
           <el-input v-model="form.mCount"></el-input>
         </el-form-item>
-          <el-form-item label="短　信 　密　 码">
+          <el-form-item label="短　信 　密　 码"><br>
           <el-input v-model="form.mPassword"></el-input>
         </el-form-item>
-        <el-form-item label="短　信　 模　 板">
+        <el-form-item label="短　信　 模　 板"><br>
           <el-input v-model="form.mTemplate"></el-input>
         </el-form-item>
-        <el-form-item label="公　众　号AppId">
+        <el-form-item label="公　众　号AppId"><br>
           <el-input v-model="form.publicId"></el-input>
         </el-form-item>
-        <el-form-item label="公众号AppSecret">
+        <el-form-item label="公众号AppSecret"><br>
           <el-input v-model="form.appSecret"></el-input>
         </el-form-item>
         <div class='clear'></div>
@@ -54,17 +54,8 @@ export default {
   },
   methods: {
 allConfig(){
-
-    const head = { headers: { "api-token": this.$sign(), "Authorization":this.http.vtoken } }
-      this.http.axios.get(this.http.url + 'config/all', head).then(res => {
+      this.$axios.get('http://retail.caidj.cn/api/config/all').then(res => {
         const data = res.data.data;
-            this.form.title=data.title;
-            this.form.address=data.send_address;
-            this.form.mobile=data.tel;
-            this.form.notice=data.public_msg;
-            this.form.wCount=data.mchid;
-            this.form.wPassword=data.appkey;
-             
              this.form.mCount=data.dx_user;
              this.form.mPassword=data.dx_pwd;
              this.form.mTemplate=data.register_tem;
@@ -75,7 +66,6 @@ allConfig(){
      },
 
     onSubmit() {
-      const head = { headers: { "api-token": this.$sign(), "Authorization": this.http.vtoken } }
       const params = {
        dx_user: this.form. mCount,
         dx_pwd: this.form.mPassword,
@@ -83,19 +73,8 @@ allConfig(){
         appid: this.form.publicId,
         appsecret:this.form.appSecret
       }
-      this.http.axios.post(this.http.url + 'config/project', params, head).then(res => {
-        const data = res.data;
-        if (data.errCode !== 0) {
-          this.$message.warning(data.message);
-        } else {
-          this.$message.success('提交成功');
-        this.allconfig()
-        }
-
-      }).catch(err => {
-        const errtip = err.response.data;
-        this.$message.info(errtip.message)
-      })
+      const url='api/config/project';
+      this.$api.update(url,params,'','提交成功');
     },
     reset() {
       for (var i in this.form) {
@@ -107,16 +86,12 @@ allConfig(){
 }
 
 </script>
-<style scoped>
+<style >
 .el-form {
   overflow: hidden;
 }
 
-.area {
-  width: 100% !important;
-}
-
-
+.c-project .el-input{width:30%;}
 
 .el-form>div:nth-child(n+8) {
   margin-left: 0;

@@ -1,20 +1,16 @@
 <template>
   <div class="page-body">
     <div class="page-header">
-      <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
         <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>商家管理</el-breadcrumb-item>
         <el-breadcrumb-item>商家列表</el-breadcrumb-item>
-        <router-link :to="{name:'roleCreate'}">
-          <m-button type="success" size="mini" class='add'>添加角色</m-button>
-        </router-link>
         <m-button type="success" size="mini" class='search' @click='search'>查询</m-button>
         <m-input placeholder="请输入你要查找的名称" theme="success" v-model="query" @keyup.enter.native="search()" />
       </el-breadcrumb>
     </div>
     <div class="box">
-      <el-table :data="table" max-height="550" :default-sort="{prop: 'created_at', order: 'descending'}" v-loading="loading" element-loading-text="拼命加载中">
+      <el-table :data="table" max-height="550"  v-loading="loading" element-loading-text="拼命加载中">
         <el-table-column label="#" type="index"></el-table-column>
         <el-table-column v-for='item in list' :label="item.label" :prop="item.prop" :key='item.label'></el-table-column>
         <el-table-column label="状态">
@@ -47,7 +43,7 @@
         <el-form :model="form">
  
     <el-form-item label="转移至该站点" >
-      <el-select v-model="form.site" placeholder="请选择活动区域">
+      <el-select v-model="form.site" placeholder="请选择站点" style="width:200px;">
         <el-option v-for="(item,index) in allSite" :label="item.name" :value="item.id" :key="index"></el-option>
       
       </el-select>
@@ -59,7 +55,7 @@
   </div>
       </el-dialog>
       <div class="block" style="display:flex;padding-top:1%;">
-        <el-pagination style="margin:0 auto;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="arrPage" :page-size="3" :size="20" layout="total, sizes, prev, pager, next, jumper" :total="count" @keyup.left.native="left()">
+        <el-pagination style="margin:0 auto;" @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage4" :page-sizes="arrPage" :page-size="3" :size="20" layout="total, sizes, prev, pager, next, jumper" :total="count">
         </el-pagination>
       </div>
     </div>
@@ -84,7 +80,6 @@ export default {
         { label: '电话号码', prop: 'mobile' },
         { label: '创建时间', prop: 'created_at' },
       ],
-
       query: '',
       table: [],
       num: '',
@@ -114,24 +109,14 @@ export default {
       this.sindex()
     },
 
-    //显示角色列表
+    //显示商家列表
     sindex() {
       const pages = localStorage.getItem('商家') == null ? 1 : localStorage.getItem('商家');
       const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbr = `${this.http.url}business/index?page=${pages}&&num=${nums}`;
-      const Url = !this.query ?
-        abbr : `${abbr}&&search=name:${this.query}`;
-      this.$axios.get(Url).then(res => {
-        const result = res.data.data;
-        const data = result.collection;
-        this.count = result.total;
-        this.table = [];
-        const _this = this;
-        for (var i of data) {
-          this.table.push(i);
-          setTimeout(function() { _this.loading = false }, 500);
-        }
-      })
+      const abbr = `api/business/index?page=${pages}&&num=${nums}`;
+      const url = !this.query ?
+        abbr : `${abbr}&&search=name:${this.query};mobile:${this.query}`;
+        this.$api.list(url,this);
     },
     //查找
     search() {
@@ -140,17 +125,11 @@ export default {
 
   change(id, state) {
       const param = { id: id, status: state }
-      this.$axios.post(`${this.http.url}business/freezeAction`, param).then(res => {
-        const data = res.data.data
-
-        this.sindex()
-      }).catch(() => {
-
-      })
+      this.$api.nozzle('api/business/freezeAction',param,this)
     },
 
     info(id) {
-      this.$axios.get(`${this.http.url}role/info?id=${id}`).then(res => {
+      this.$axios.get(`http://retail.caidj.cn/api/role/info?id=${id}`).then(res => {
         const result = res.data.data;
         const _this = this;
         if (res.data.errCode != 0) {
@@ -168,24 +147,18 @@ export default {
      move(id) {
        this.id=id
      	this.show=true;
-     	 this.$axios.get(`${this.http.url}station/index`).then(res=>{
+     	 this.$axios.get(`http://retail.caidj.cn/api/station/index`).then(res=>{
            const data =res.data.data.collection;
            this.allSite=data;
-      
       })
-    
     },
     movesite(){  
      	const param={id:this.id, websiteId:this.form.site } 
-
-  this.$axios.post(`${this.http.url}business/divert`,param).then(()=>{
+      this.$axios.post(`http://retail.caidj.cn/api/business/divert`,param).then(()=>{
       	this.$message.success('转移成功');
       	this.show=false;
       })
-
      }
-
-
   }
 }
 

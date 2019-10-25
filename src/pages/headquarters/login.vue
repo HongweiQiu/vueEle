@@ -35,40 +35,13 @@ export default {
   methods: {
   
     handleLogin () {
-      // this.isLoging = true;
-      if (!this.username || !this.password) {
- 
-         this.$message.warning('用户名和密码不能为空')
-                
-      }
-
-     if(this.password.length<6){
-       return this.$message.warning('密码最少为6个字符')
-     }
- 
-     const params= {'username':this.username, 'password':this.password }
-     this.$axios.post('http://retail.caidj.cn/api/login',params).then(res => {
-          const result=res.data;
-           this.isLoging = true;
-         
-           if(result.errCode!=0){ 
-            this.$message.warning(result.message); }
-            else{
-                    this.$message.success("登录成功");
-                    localStorage.setItem('刷新token',result.data.refresh_token);
-                    localStorage.setItem('访问token',result.data.access_token);
-                    this.$router.push({name: 'home'});
-               }  
-      }).catch(err=>{
-         
-            
-          if(errCode.errCode){ 
-          this.$message.info(errCode.message);
-      }
-      });
+       this.isLoging = true;
        const _this=this;
-  setTimeout(function(){ _this.isLoging=false},1500)
-  //   
+       const url ='api/login';
+       const params= {username:this.username, password:this.password }
+       this.$api.login(url,params,'home',this)  
+       setTimeout(()=>{ _this.isLoging=false},1000)  
+     
 }
   }
 }

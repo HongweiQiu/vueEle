@@ -3,7 +3,7 @@
     <div class="page-header">
       <!--   <h1 class="page-title">Table表格数据</h1> -->
       <el-breadcrumb separator-class="el-icon-arrow-right">
-        <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+        <el-breadcrumb-item :to="{ name: 'b-home' }">首页</el-breadcrumb-item>
         <el-breadcrumb-item>人员管理</el-breadcrumb-item>
         <el-breadcrumb-item>角色更新</el-breadcrumb-item>
       </el-breadcrumb>
@@ -38,21 +38,27 @@ export default {
 
   methods: {
     getInfo() {
-      this.$axios.get(this.http.url + 'role/info?id=' + this.$route.query.id).then(res => {
-        const data = res.data.data;
-        this.form.name = data.name;
-        this.form.note = data.remark;
+      this.$axios.get('http://retail.caidj.cn/business/role/index').then(res => {
+        const data = res.data.data.collection;
+        for(var i of data){
+           if(i.id==this.$route.query.id){
+            this.form.name = i.name;
+            this.form.note = i.remark;
+        }
+        }
       })
     },
+
     onSubmit() {
       const params = {
         id: this.$route.query.id,
         name: this.form.name,
         remark: this.form.note
       }
-      this.$api.update('api/role/update', params, 'roleIndex', '修改成功')
+      const url='business/role/update'
+      this.$api.update(url,params,'b-rolelist','修改成功');
     },
-
+    
     reset() {
       for (var i in this.form) {
         this.form[i] = ''

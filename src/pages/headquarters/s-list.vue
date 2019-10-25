@@ -18,7 +18,7 @@
       v-loading="loading"  element-loading-text="拼命加载中"
     element-loading-spinner="el-icon-loading">
         <el-table-column label="#" type="index" ></el-table-column> 
-         <el-table-column label="创建时间"  prop="created_at" sortable>地方</el-table-column>  
+         <el-table-column label="创建时间"  prop="created_at" sortable></el-table-column>  
         <el-table-column v-for='item in list' :label="item.label" :prop="item.prop" :key='item.label' ></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
@@ -86,22 +86,14 @@ export default {
 
     //显示站点列表
     sindex() {
-      this.page= Number(localStorage.getItem('站点页'));
+      this.page   = Number(localStorage.getItem('站点页'));
+      const query=this.query;
       const pages =  this.page== null ? 1 :this.page;
-      const _this=this;
-      const nums = this.num == '' ? this.arrPage[0] : this.num;
-      const abbr = `${this.http.url}station/index?page=${pages}&&num=${nums}`;
-      const Url = !this.query ?
-        `${abbr}` : `${abbr}&&search=name:${this.query}`;
-      this.$axios.get(Url).then(res => {
-        const result = res.data.data;
-        const data = result.collection;
-        this.count = result.total;
-        this.table = []; 
-        for (var i of data) {  
-          this.table.push(i); }
-        setTimeout(()=>{_this.loading=false }, 500);
-      })
+      const nums  = this.num == '' ? this.arrPage[0] : this.num;
+      const abbr  = `api/station/index?page=${pages}&&num=${nums}`;
+      const url   = !this.query ?
+        `${abbr}` : `${abbr}&&search=name:${query};full_name:${query};address:${query}`;
+       this.$api.list(url,this);
     },
 
     //修改站点
@@ -109,16 +101,8 @@ export default {
 
     //删除站点
     del(id) {
-      this.$confirm('此操作将永久删除该信息, 是否继续?', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$axios.get(`${this.http.url}station/delete?id=${id}`).then(res => {
-          this.sindex();
-          this.$message.success('删除成功')
-        })
-      }).catch(() => { this.$message.warning('已取消删除') });
+       const url='api/station/delete';
+       this.$api.delete(url,id,this);
     }
   }
 }

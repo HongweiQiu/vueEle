@@ -8,8 +8,9 @@ import NProgress from 'nprogress'
 
 import sign from './../static/js/setting'//总部签名token
 import websitesign from './../static/js/website'//站点签名token
-
+import shopsign from './../static/js/business'//商家签名token
 import http from './../config/apiUrl.js'
+import api from './http/axios'
 
 import App from './App'
 import store from './store'
@@ -41,10 +42,14 @@ import MContainer from '@/m/container'
 
 
 Vue.prototype.$sign=sign
+Vue.prototype.$shopsign=shopsign
 Vue.prototype.$websitesign=websitesign
+
 Vue.prototype.$axios = Axios;
 Axios.defaults.withCredentials =true;//请求不到cookie添加该行
 Vue.prototype.http=http
+Vue.prototype.$api=api;//接口文件
+
 Vue.use(http)
 Vue.use(ElementUI)
 
@@ -64,17 +69,14 @@ Vue.use(MBackTop)
 Vue.use(MLoader)
 Vue.use(MContainer)
 
-var whiteList = ['demo', 'login','w-login']
+var whiteList = ['demo', 'login','w-login','b-login']
+
 
 router.beforeEach((to, from, next) => {
   NProgress.start()
-  var token = localStorage.getItem('访问token')||localStorage.getItem('wv_token');
-    if(to.name=='w-login'){
-      localStorage.removeItem('访问token')
-    }else if(to.name=='login'){
-      localStorage.removeItem('wv_token')
-    }
-    
+  var token = localStorage.getItem('token'); 
+     if(to.name=='login'||to.name=='w-login'||to.name=='b-login'){
+      localStorage.removeItem('token')}
   if (!token&&whiteList.indexOf(to.name)===-1) {
     app && app.$message.warning('未授权，请登陆授权后继续');
     NProgress.done()
@@ -100,15 +102,16 @@ Axios.defaults.validateStatus = status => {
 Axios.interceptors.request.use(config => {
    let oUrl=config.url;
    var inter;
-   let token = localStorage.getItem('访问token')||localStorage.getItem('wv_token');
+    var token = localStorage.getItem('token');
  if(oUrl.match('/api/')){
     inter=sign();
  } else if(oUrl.match('/website/')){
   inter=websitesign()
- } 
- 
-  config.headers['Authorization'] = 'Bearer ' + token
-  config.headers['api-token'] = inter;
+ } else {
+  inter=shopsign()
+ }
+ config.headers['Authorization'] = 'Bearer ' + token
+ config.headers['api-token'] = inter;
   return config
 })
 
@@ -121,7 +124,6 @@ Axios.interceptors.response.use(res => {
       message: res.data.message
     })
      let url=res.request.responseURL;
-     
      if(url.match('website')){
       router.push({name: 'w-login'})
     } else if(url.match('api')){

@@ -18,8 +18,8 @@
     </el-menu>
 
   </div>
-
-<!--  <v-menu class="side-menu"
+<!--  -->
+ <!-- <v-menu class="side-menu"
   :collapse="collapse"
   :default-active="defaultActive"
   :menus="menus"
@@ -31,16 +31,16 @@
 
 </template>
 <script type="text/javascript">
-// import VMenu from './vmenu'
-// import menus from './menus'
+import VMenu from './vmenu'
+import menus from './menus'
 export default {
   props: {
     collapse: Boolean,
     theme: Object
   }, 
-  // components: {
-  //   VMenu
-  // },
+  components: {
+    VMenu
+  },
  data () {
     return {
       menus:[],
@@ -50,10 +50,7 @@ export default {
   },
   computed: {
     isShow:{
-      get(){return this.$store.state.show},
-      set(){
-        this.$store.state.show=false
-      }
+       get(){return this.$store.state.show},
     }
   },
   watch: {
@@ -76,7 +73,7 @@ export default {
     }
   },
   created() {
-    this.list()
+     this.list()
     this.setCurrentRoute()
   }
 }
